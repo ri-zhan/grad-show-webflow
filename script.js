@@ -148,19 +148,23 @@ let viewport = {
 
 
 function dragElement(elmnt) {
+    // if ((elmnt.className == 'collection-item') || (elmnt.id == 'content')) {
+    //     console.log('current state is ' + elmnt.getAttribute('draggable'))
+
+    //     if (elmnt.getAttribute('draggable') == 'false') {
+    //         // dragElement(elmnt)
+    //         elmnt.setAttribute('draggable', true);
+    //         console.log('the state of ' + elmnt.className +' is now set to ' + elmnt.getAttribute('draggable'))
+    //     } else {
+
+    //     }
+
+    // }
+    console.log(elmnt)
 
     var cursorPosX = 0, cursorPosY = 0, intX = 0, intY = 0;
 
-    if (document.getElementById(elmnt.id + "header")) {
-    /* if present, the header is where you move the DIV from:*/
-        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-    } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-        elmnt.onmousedown = dragMouseDown;
-        // document.body.onmousedown = function() { 
-        //     console.log(elmnt)
-        //   }
-    }
+    elmnt.onmousedown = dragMouseDown;
 
     if (elmnt.className == 'collection-item') {
         container = document.getElementById('content');
@@ -176,7 +180,6 @@ function dragElement(elmnt) {
         // get the mouse cursor position at startup:
         intX = e.clientX;
         intY = e.clientY;
-        
 
         // store the current viewport and element dimensions when a drag starts
         rect = elmnt.getBoundingClientRect();
@@ -236,9 +239,9 @@ function dragElement(elmnt) {
     function closeDragElement() {
         /* stop moving when mouse button is released:*/
         document.onmouseup = null;
-        elmnt.onmouseup = elmnt.setAttribute('draggable', false);
+        // elmnt.onmouseup = elmnt.setAttribute('draggable', false);
         document.onmousemove = null;
-        console.log('mouse up, the state is now set to ' + elmnt.getAttribute('draggable'))
+        // console.log('mouse up, the state is now set to ' + elmnt.getAttribute('draggable'))
 
     }
 
@@ -286,18 +289,9 @@ window.addEventListener('load', function() {
 })
 
 
-document.addEventListener('mouseover', function(e) {
+document.addEventListener('mousedown', function(e) {
     e.preventDefault();
-    if ((e.target.className == 'collection-item') || (e.target.id == 'content')) {
-        console.log('current state is ' + e.target.getAttribute('draggable'))
-
-        if (e.target.getAttribute('draggable') == 'false') {
-            dragElement(e.target)
-            e.target.setAttribute('draggable', true);
-            console.log('the state is now set to ' + e.target.getAttribute('draggable'))
-        }
-
-    }
+    dragElement(e.target);
 });
 
 
