@@ -131,90 +131,6 @@ let events = ['click', 'mouseup']
 
 
 
-function dragInnerElement(elmnt) {
-    elmnt.target.style.zIndex = "999";
-    // console.log(elmnt.className)
-    var cursorPosX = 0, cursorPosY = 0, intX = 0, intY = 0;
-    if (document.getElementById(elmnt.id + "header")) {
-    /* if present, the header is where you move the DIV from:*/
-        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-    } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-        elmnt.target.onmousedown = dragMouseDown;     
-                // add function here that says "if clicked item is a nodelist get the item that was clicked"     
-    }
-    
-    container = document.getElementById('content');
-    
-
-    function dragMouseDown(e) {
-        e = e || window.event;
-        // get the mouse cursor position at startup:
-        intX = e.clientX;
-        intY = e.clientY;
-        
-        rect = elmnt.target.getBoundingClientRect();
-
-        // get container's width and height currently
-        viewport.right = container.clientWidth;
-        viewport.bottom = container.clientHeight;
-
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
-        //   console.log('test')
-
-    }
-
-    function elementDrag(e) {
-      e = e || window.event;
-      // calculate the new cursor position relative to div boundary
-      cursorPosX = intX - e.clientX;
-      cursorPosY = intY - e.clientY;
-      // reestablishing new cursor pos
-      intX = e.clientX;
-      intY = e.clientY;
-
-      // check to make sure the element will be within our viewport boundary
-      var cursorMovementX = elmnt.offsetLeft - cursorPosX;
-      var cursorMovementY = elmnt.offsetTop - cursorPosY;
-
-      if (
-          cursorMovementX > viewport.left 
-          || cursorMovementY > viewport.top
-      ) {
-          // the element will hit the boundary, do nothing...
-          console.log('left and top') 
-      } else if (
-          cursorMovementX < viewport.right - contentWidth
-          || cursorMovementY < viewport.bottom - contentHeight)
-          {
-
-            console.log('right and bottom') 
-      } else {
-          // set the element's new position:
-
-        elmnt.target.style.top = (elmnt.target.offsetTop - cursorPosY) + "px";
-        elmnt.target.style.left = (elmnt.target.offsetLeft - cursorPosX) + "px";      
-        // elmnt.target.style.t = (elmnt.offsetTop - cursorPosY) + "px";          Z INDEX
-      }
-    }
-
-    function closeDragElement() {
-        /* stop moving when mouse button is released:*/
-        document.onmouseup = null;
-        document.onmousemove = null;
-    }
-    // console.log('working')
-}
-
-
-
-
-
-
-
-
 
 let selectedWidth;
 let selectedHeight;
@@ -229,14 +145,9 @@ let viewport = {
     top: 0
 }
 
-// dragElement(content);
 
 
 function dragElement(elmnt) {
-
-
-
-    console.log(elmnt);
 
     var cursorPosX = 0, cursorPosY = 0, intX = 0, intY = 0;
 
@@ -298,35 +209,37 @@ function dragElement(elmnt) {
         let rightBottom;
 
         if (elmnt.className == 'collection-item') {
-                leftTop = (cursorMovementX < viewport.left 
-                    || cursorMovementY < viewport.top);
-                rightBottom = (cursorMovementX > viewport.right - selectedWidth
-                    || cursorMovementY > viewport.bottom - selectedHeight);
-            } else {
-                leftTop = (cursorMovementX > viewport.left 
-                    || cursorMovementY > viewport.top);
-                rightBottom = (cursorMovementX < viewport.right - selectedWidth
-                    || cursorMovementY < viewport.bottom - selectedHeight);
-                        // console.log('testing')
-        }
-
-        if (leftTop) {
-            // the element will hit the boundary, do nothing...
-            // console.log(cursorMovementX +  '>' +  viewport.left ) 
-        } else if (rightBottom) {
-            // console.log('right and bottom') 
+            leftTop = (cursorMovementX < viewport.left 
+                || cursorMovementY < viewport.top);
+            rightBottom = (cursorMovementX > viewport.right - selectedWidth
+                || cursorMovementY > viewport.bottom - selectedHeight);
         } else {
-            // set the element's new position:
-            elmnt.style.top = (elmnt.offsetTop - cursorPosY) + "px";
-            elmnt.style.left = (elmnt.offsetLeft - cursorPosX) + "px";      
-        }
+            leftTop = (cursorMovementX > viewport.left 
+                || cursorMovementY > viewport.top);
+            rightBottom = (cursorMovementX < viewport.right - selectedWidth
+                || cursorMovementY < viewport.bottom - selectedHeight);
+                    // console.log('testing')
     }
+
+            if (leftTop) {
+                // the element will hit the boundary, do nothing...
+                // console.log(cursorMovementX +  '>' +  viewport.left ) 
+            } else if (rightBottom) {
+                // console.log('right and bottom') 
+            } else {
+                // set the element's new position:
+                elmnt.style.top = (elmnt.offsetTop - cursorPosY) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - cursorPosX) + "px";      
+            }
+        }
 
     function closeDragElement() {
         /* stop moving when mouse button is released:*/
         document.onmouseup = null;
-        // elmnt.onmouseup = elmnt.setAttribute("draggable", false);
+        elmnt.onmouseup = elmnt.setAttribute('draggable', false);
         document.onmousemove = null;
+        console.log('mouse up, the state is now set to ' + elmnt.getAttribute('draggable'))
+
     }
 
 }
@@ -366,14 +279,24 @@ function dragElement(elmnt) {
 
 // dragElement(content);
 
+window.addEventListener('load', function() {
+    card.forEach(e => {
+        e.setAttribute('draggable', false);
+    });
+})
 
 
 document.addEventListener('mouseover', function(e) {
-    // e.preventDefault();
+    e.preventDefault();
     if ((e.target.className == 'collection-item') || (e.target.id == 'content')) {
-        dragElement(e.target)
-        console.log(e.target)
-        e.target.setAttribute("draggable", true);
+        console.log('current state is ' + e.target.getAttribute('draggable'))
+
+        if (e.target.getAttribute('draggable') == 'false') {
+            dragElement(e.target)
+            e.target.setAttribute('draggable', true);
+            console.log('the state is now set to ' + e.target.getAttribute('draggable'))
+        }
+
     }
 });
 
@@ -464,120 +387,3 @@ document.addEventListener('mouseover', function(e) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-// function dragElement(elmnt) {
-//     console.log(elmnt)
-//     // console.log(elmnt.className)
-//     var cursorPosX = 0, cursorPosY = 0, intX = 0, intY = 0;
-//     if (document.getElementById(elmnt.id + "header")) {
-//     /* if present, the header is where you move the DIV from:*/
-//         document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-//     } else {
-//     /* otherwise, move the DIV from anywhere inside the DIV:*/
-
-//         if (elmnt.target.className = 'collection-item') {  
-//                 elmnt.target.onmousedown = dragMouseDown;     
-//                 // add function here that says "if clicked item is a nodelist get the item that was clicked"       
-//         } else {
-//             elmnt.onmousedown = dragMouseDown;
-//         }
-//     }
-    
-//     if (elmnt.id == 'content') {
-//         container = document.getElementById('container');
-//     } else if (elmnt.target.className == 'collection-item') {
-//         container = document.getElementById('content');
-//         // console.log(container)
-//     } else {
-//         // container = "container"
-//     }
-    
-
-//     function dragMouseDown(e) {
-//         e = e || window.event;
-//         // get the mouse cursor position at startup:
-//         intX = e.clientX;
-//         intY = e.clientY;
-        
-
-//         // store the current viewport and element dimensions when a drag starts
-//         // rect = elmnt.getBoundingClientRect();
-//         // rect = elmnt.target.getBoundingClientRect();
-//     //   console.log(elmnt.target.getBoundingClientRect())
-//       if (elmnt.target.className = 'collection-item') {
-//             rect = elmnt.target.getBoundingClientRect();
-//             console.log('test')
-//         } else {
-//             rect = elmnt.getBoundingClientRect();
-//         }
-//     //   console.log(rect)
-
-//       // get container's width and height currently
-//       viewport.right = container.clientWidth;
-//       viewport.bottom = container.clientHeight;
-
-//       document.onmouseup = closeDragElement;
-//       // call a function whenever the cursor moves:
-//       document.onmousemove = elementDrag;
-//     //   console.log('test')
-
-//     }
-
-//     function elementDrag(e) {
-//       e = e || window.event;
-//       // calculate the new cursor position relative to div boundary
-//       cursorPosX = intX - e.clientX;
-//       cursorPosY = intY - e.clientY;
-//       // reestablishing new cursor pos
-//       intX = e.clientX;
-//       intY = e.clientY;
-
-//       // check to make sure the element will be within our viewport boundary
-//       var cursorMovementX = elmnt.offsetLeft - cursorPosX;
-//       var cursorMovementY = elmnt.offsetTop - cursorPosY;
-
-//       if (
-//           cursorMovementX > viewport.left 
-//           || cursorMovementY > viewport.top
-//       ) {
-//           // the element will hit the boundary, do nothing...
-//           console.log('left and top') 
-//       } else if (
-//           cursorMovementX < viewport.right - contentWidth
-//           || cursorMovementY < viewport.bottom - contentHeight)
-//           {
-
-//             console.log('right and bottom') 
-//       } else {
-//           // set the element's new position:
-//         //   elmnt.style.top = (elmnt.offsetTop - cursorPosY) + "px";
-//         //   elmnt.style.left = (elmnt.offsetLeft - cursorPosX) + "px";
-
-//             if (elmnt.target.className = 'collection-item') {
-//                 elmnt.target.style.top = (elmnt.target.offsetTop - cursorPosY) + "px";
-//                 elmnt.target.style.left = (elmnt.target.offsetLeft - cursorPosX) + "px";      
-//                 // elmnt.target.style.t = (elmnt.offsetTop - cursorPosY) + "px";          Z INDEX
-//             } else {
-//                 elmnt.style.top = (elmnt.offsetTop - cursorPosY) + "px";
-//                 elmnt.style.left = (elmnt.offsetLeft - cursorPosX) + "px";      
-//             }
-//       }
-//     }
-
-//     function closeDragElement() {
-//         /* stop moving when mouse button is released:*/
-//         document.onmouseup = null;
-//         document.onmousemove = null;
-//     }
-//     // console.log('working')
-// }
-    
