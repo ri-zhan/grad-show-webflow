@@ -1,0 +1,35 @@
+.container {
+    position: relative;
+    margin: 200px;
+    /* transition: all 50ms ease-out; */
+}
+
+.background {
+    position: absolute;
+    background:
+        repeating-conic-gradient(
+            #fafafa 0 90deg,
+            #EBEBEB 0 180deg) 
+            0 0/40px 40px round;
+    z-index: -99;
+}
+
+.content {
+    cursor: move;
+    position: relative;
+    z-index: 89;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* max-width: 150%; */
+    /* left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); */
+    /* left: 0; */
+    /* transition: all 50ms ease-out; */
+}
+
+.collection-item {
+    position: absolute;
+    z-index: 99;
+    left: 50%;
+    pointer-events: all;
+}
