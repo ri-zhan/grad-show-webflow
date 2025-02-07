@@ -97,44 +97,24 @@ let contentHeight = content.clientHeight;
 let moveAmountX;
 let moveAmountY;
 
+let viewableArea = document.getElementById('container');
 // center content
-// window.onload = function(){ 
-//     // move it left or top 50% then translate it -50%;
-//     moveAmountX = container.clientWidth/2 - content.clientWidth/2;
-//     moveAmountY = container.clientHeight/2 - content.clientHeight/2;
-//     content.style.left = moveAmountX + 'px';
-//     content.style.top = moveAmountY + 'px';
+window.onload = function(e){ 
+    // move it left or top 50% then translate it -50%;
+    moveAmountX = viewableArea.clientWidth/2 - content.clientWidth/2;
+    moveAmountY = viewableArea.clientHeight/2 - content.clientHeight/2;
+    content.style.left = moveAmountX + 'px';
+    content.style.top = moveAmountY + 'px';
 
     
-// }
+}
 
 
 // draggable js
 
-// instatiate placeholder variable
-
-
-// let foo = 0;
-//Make the DIV element draggagle:
-// dragElement(content);
-// dragElement(card);
-
-let events = ['click', 'mouseup']
-
-// document.querySelectorAll('.collection-item').forEach(function(el) {
-//     el.addEventListener('mouseover', function(e) {
-//         dragInnerElement(e)
-//     });
-// });
-
-
-
-
-
-
+// instatiate placeholder variables
 let selectedWidth;
 let selectedHeight;
-// viewport;
 let rect;
 
 // establishing viewport boundaries
@@ -145,23 +125,9 @@ let viewport = {
     top: 0
 }
 
-
+let mouseDown = false;
 
 function dragElement(elmnt) {
-    // if ((elmnt.className == 'collection-item') || (elmnt.id == 'content')) {
-    //     console.log('current state is ' + elmnt.getAttribute('draggable'))
-
-    //     if (elmnt.getAttribute('draggable') == 'false') {
-    //         // dragElement(elmnt)
-    //         elmnt.setAttribute('draggable', true);
-    //         console.log('the state of ' + elmnt.className +' is now set to ' + elmnt.getAttribute('draggable'))
-    //     } else {
-
-    //     }
-
-    // }
-    console.log(elmnt)
-
     var cursorPosX = 0, cursorPosY = 0, intX = 0, intY = 0;
 
     elmnt.onmousedown = dragMouseDown;
@@ -176,6 +142,8 @@ function dragElement(elmnt) {
     selectedHeight = elmnt.clientHeight;    
 
     function dragMouseDown(e) {
+        mouseDown = true;
+
         e = e || window.event;
         // get the mouse cursor position at startup:
         intX = e.clientX;
@@ -188,9 +156,9 @@ function dragElement(elmnt) {
         viewport.right = container.clientWidth;
         viewport.bottom = container.clientHeight;
 
-        document.onmouseup = closeDragElement;
+        elmnt.onmouseup = closeDragElement;
         // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
+        elmnt.onmousemove = elementDrag;
 
     }
 
@@ -221,26 +189,25 @@ function dragElement(elmnt) {
                 || cursorMovementY > viewport.top);
             rightBottom = (cursorMovementX < viewport.right - selectedWidth
                 || cursorMovementY < viewport.bottom - selectedHeight);
-                    // console.log('testing')
-    }
-
-            if (leftTop) {
-                // the element will hit the boundary, do nothing...
-                // console.log(cursorMovementX +  '>' +  viewport.left ) 
-            } else if (rightBottom) {
-                // console.log('right and bottom') 
-            } else {
-                // set the element's new position:
-                elmnt.style.top = (elmnt.offsetTop - cursorPosY) + "px";
-                elmnt.style.left = (elmnt.offsetLeft - cursorPosX) + "px";      
-            }
         }
+
+        if (leftTop) {
+            // the element will hit the boundary, do nothing...
+            // console.log(cursorMovementX +  '>' +  viewport.left ) 
+        } else if (rightBottom) {
+            // console.log('right and bottom') 
+        } else {
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - cursorPosY) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - cursorPosX) + "px";      
+        }
+    }
 
     function closeDragElement() {
         /* stop moving when mouse button is released:*/
-        document.onmouseup = null;
-        // elmnt.onmouseup = elmnt.setAttribute('draggable', false);
-        document.onmousemove = null;
+        elmnt.onmouseup = null;
+        mouseDown = false;
+        elmnt.onmousemove = null;
         // console.log('mouse up, the state is now set to ' + elmnt.getAttribute('draggable'))
 
     }
@@ -275,25 +242,12 @@ function dragElement(elmnt) {
 
 
 
-
-// card.forEach(function(el) {
-//     dragElement(el)
-// });
-
-// dragElement(content);
-
-window.addEventListener('load', function() {
-    card.forEach(e => {
-        e.setAttribute('draggable', false);
-    });
-})
-
-
-document.addEventListener('mousedown', function(e) {
-    e.preventDefault();
-    dragElement(e.target);
+document.addEventListener('mouseover', function(e) {
+    if ((mouseDown == false) && ((e.target.className == 'collection-item') || (e.target.id == 'content'))) {
+        e.preventDefault();
+        dragElement(e.target);
+    }
 });
-
 
 
 
