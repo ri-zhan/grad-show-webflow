@@ -231,6 +231,12 @@ document.addEventListener('mouseover', function(e) {
  */
 
 function getRandomPosition(projectContainer, card) {
+
+    card.forEach(e => {
+        cardWidth = e.style.width;
+        cardHeight = e.style.height;
+    });
+
     // Get the bounding rectangles
     const projectContainerRect = projectContainer.getBoundingClientRect();
 
@@ -240,18 +246,18 @@ function getRandomPosition(projectContainer, card) {
 
     card.forEach(e => {
         const cardRect = e.getBoundingClientRect();
-        console.log(cardRect)
         // Generate a random position around clustered around the center
         if (isClustered) {
-            const x = centerX + (Math.random() - 0.5) * (projectContainerRect.width / clusterCentralityX) - cardRect.width / 2;
-            const y = centerY + (Math.random() - 0.5) * (projectContainerRect.height / clusterCentralityY) - cardRect.height / 2;
+            // center of div + a random number * ( (the width of the project container - the width of the collection items so it doesn't go outside of the container) / by how clustered it should be ) - from the surrounding items
+            const x = centerX + (Math.random() - 0.5) * ((projectContainerRect.width - parseInt(cardWidth)) / clusterCentralityX) - cardRect.width / 2;
+            const y = centerY + (Math.random() - 0.5) * ((projectContainerRect.height - parseInt(cardHeight)) / clusterCentralityY) - cardRect.height / 2;
             e.style.left = x + 'px';
             e.style.top = y + 'px';
         }
         // Or generate a truly random position
         else {
-            const x = Math.random() * (projectContainerRect.width - cardRect.width);
-            const y = Math.random() * (projectContainerRect.height - cardRect.height);
+            const x = Math.random() * ((projectContainerRect.width - parseInt(cardWidth)) - cardRect.width);
+            const y = Math.random() * ((projectContainerRect.height - parseInt(cardHeight)) - cardRect.height);
             return { x, y };
             e.style.left = x + 'px';
             e.style.top = y + 'px';
