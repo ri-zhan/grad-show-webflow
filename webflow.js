@@ -1,12 +1,5 @@
-// How clustered the cards are around the center
-// Lower values = less clustered
-let clusterCentralityX = 1.2;
-let clusterCentralityY = 1;
+// CHANGE WEBFLOW CLASSNAMES AND ID'S TO MATCH THE CODE.
 
-// T: Clustered, F: Random
-let isClustered = true;
-
-// Feel free to change these to match your own class names
 const projectContainer = document.querySelector("#content"); // The class name for the element containing the draggable elements
 const card = document.querySelectorAll(".collection-item"); // The class name for the draggable elements
 
@@ -185,6 +178,19 @@ document.addEventListener('mouseover', function(e) {
     } else {
     }
 });
+
+
+// random generation code
+
+// How clustered the cards are around the center
+// Lower values = less clustered
+let clusterCentralityX = 1.2;
+let clusterCentralityY = 1;
+
+// T: Clustered, F: Random
+let isClustered = true;
+
+
 /**
  * Generate random position for a card
 //  * @param {HTMLElement} content - The projectContainer element
