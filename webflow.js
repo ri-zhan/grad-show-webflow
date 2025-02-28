@@ -1,55 +1,3 @@
-
-
-// function zoomin(){
-//     var myImg = document.getElementById("content");
-//     var currWidth = myImg.clientWidth;
-//     //if(currWidth == 2500) return false;
-//     // else{
-//     //    myImg.style.width = (currWidth + 100) + "px";
-//     //} 
-//     myImg.style.width = (currWidth + 100) + "px";
-// }
-// function zoomout(){
-//     var myImg = document.getElementById("content");
-//     var currWidth = myImg.clientWidth;
-//     if(currWidth == 100) return false;
-//      else{
-//         myImg.style.width = (currWidth - 100) + "px";
-//     }
-// }
-
-
-
-// window.addEventListener('wheel', function(e) {
-
-//     e.preventDefault()
-//     // ...
-
-//     // min width / min height is viewport width/height
-
-
-//     var zoom = 1;
-//     var zoomStep = 0.2;
-
-//     document.getElementById("zoom In").addEventListener("click", function() {
-//       zoom += zoomStep;
-//       document.getElementById("zoomtext").style.transform = "scale(" + zoom + ")";
-//     });
-//     document.getElementById("zoomOut").addEventListener("click", function() {
-//       if (zoom > zoomStep) {
-//         zoom -= zoomStep;
-//         document.getElementById("zoomtext").style.transform = "scale(" + zoom + ")";
-//       }
-//     });
-  
-//   }, {passive: false})
-
-
-
-
-
-
-
 // How clustered the cards are around the center
 // Lower values = less clustered
 let clusterCentralityX = 1.2;
@@ -83,14 +31,13 @@ let moveAmountY;
 let viewableArea = document.getElementById('container');
 
 
-// move content left or top 50% then translate it -50%;
+
 window.onload = function(e){ 
     moveAmountX = viewableArea.clientWidth/2 - content.clientWidth/2;
     moveAmountY = viewableArea.clientHeight/2 - content.clientHeight/2;
     content.style.left = moveAmountX + 'px';
     content.style.top = moveAmountY + 'px';
 }
-
 
 // draggable js
 
@@ -107,10 +54,10 @@ let viewport = {
     top: 0
 }
 
+
 // mouseDown variable checks if there's something else being moved rn. if there is something else being moved it will not allow the draggable code to execute
 let mouseDown = false;
 
-// pause highlighting function
 function pauseEvent(e){
     e.stopPropagation();
     e.preventDefault();
@@ -121,15 +68,13 @@ function pauseEvent(e){
 
 
 function dragElement(elmnt) {
-    
+
     var cursorPosX = 0, cursorPosY = 0, intX = 0, intY = 0;
 
     elmnt.onmousedown = dragMouseDown;
 
-    if (elmnt.className == 'collection-item') {
+    if (elmnt.classList.contains('collection-item')) {
         container = document.getElementById('content');
-        // bring element 1 layer up
-        elmnt.style.zIndex = "99";
     } else {
         container = document.getElementById('container');
     }
@@ -138,18 +83,17 @@ function dragElement(elmnt) {
     selectedHeight = elmnt.clientHeight;    
 
     function dragMouseDown(e) {
+ 
+        pauseEvent(e);
 
-        if (elmnt.className == 'collection-item') {
+        mouseDown = true;
+        
+        if (elmnt.classList.contains('collection-item')) {
             // bring element 1 layer up
             elmnt.style.zIndex = "99";
         } 
 
-        mouseDown = true;
-
         e = e || window.event;
-        pauseEvent(e);
-
-
         // get the mouse cursor position at startup:
         intX = e.clientX;
         intY = e.clientY;
@@ -168,12 +112,11 @@ function dragElement(elmnt) {
     }
 
     function elementDrag(e) {
-
         e = e || window.event;
         // calculate the new cursor position relative to div boundary
         cursorPosX = intX - e.clientX;
         cursorPosY = intY - e.clientY;
-
+        
         // reestablishing new cursor pos
         intX = e.clientX;
         intY = e.clientY;
@@ -209,6 +152,7 @@ function dragElement(elmnt) {
             elmnt.style.top = (elmnt.offsetTop - cursorPosY) + "px";
             elmnt.style.left = (elmnt.offsetLeft - cursorPosX) + "px";      
         }
+  
     }
 
     function closeDragElement() {
@@ -217,7 +161,7 @@ function dragElement(elmnt) {
         elmnt.onmousemove = null;
         mouseDown = false;
         elmnt.onmouseup = function(){
-            elmnt = null;
+          elmnt = null;
         };
         if (elmnt.classList.contains('collection-item')) {
             // bring element 1 layer up
@@ -226,11 +170,11 @@ function dragElement(elmnt) {
     }
 
 }
-    
+
 document.addEventListener('mouseover', function(e) {
     if (
         // if nothing else is being dragged
-        (mouseDown == false && elmnt == null) 
+        (mouseDown == false) 
         // if items being hovered over are draggable items
         && ((e.target.classList.contains('collection-item')) || (e.target.id == 'content'))
         // if viewport is bigger than mobile size
@@ -238,23 +182,9 @@ document.addEventListener('mouseover', function(e) {
     ) {
         e.preventDefault();
         dragElement(e.target);
+    } else {
     }
 });
-
-
-
-
-
-
-
-
-
-
-/**
- * USER CONFIG OPTIONS
- */
-
-
 /**
  * Generate random position for a card
 //  * @param {HTMLElement} content - The projectContainer element
@@ -264,10 +194,8 @@ document.addEventListener('mouseover', function(e) {
 
 function getRandomPosition(projectContainer, card) {
 
-    card.forEach(e => {
-        cardWidth = e.style.width;
-        cardHeight = e.style.height;
-    });
+    cardWidth = card.offsetWidth;
+    cardHeight = card.offsetHeight;
 
     // Get the bounding rectangles
     const projectContainerRect = projectContainer.getBoundingClientRect();
@@ -276,32 +204,26 @@ function getRandomPosition(projectContainer, card) {
     const centerX = projectContainerRect.width / 2;
     const centerY = projectContainerRect.height / 2;
 
-    card.forEach(e => {
-        const cardRect = e.getBoundingClientRect();
-        // Generate a random position around clustered around the center
-        if (isClustered) {
-            // center of div + a random number * ( (the width of the project container - the width of the collection items so it doesn't go outside of the container) / by how clustered it should be ) - from the surrounding items
-            const x = centerX + (Math.random() - 0.5) * ((projectContainerRect.width - parseInt(cardWidth)) / clusterCentralityX) - cardRect.width / 2;
-            const y = centerY + (Math.random() - 0.5) * ((projectContainerRect.height - parseInt(cardHeight)) / clusterCentralityY) - cardRect.height / 2;
-            e.style.left = x + 'px';
-            e.style.top = y + 'px';
-        }
-        // Or generate a truly random position
-        else {
-            const x = Math.random() * ((projectContainerRect.width - parseInt(cardWidth)) - cardRect.width);
-            const y = Math.random() * ((projectContainerRect.height - parseInt(cardHeight)) - cardRect.height);
-            return { x, y };
-            e.style.left = x + 'px';
-            e.style.top = y + 'px';
-        }
-    });
-    // const cardRect = card.getBoundingClientRect();
-
-
-
+    const cardRect = card.getBoundingClientRect();
+    // Generate a random position around clustered around the center
+    if (isClustered) {
+        // center of div + a random number * ( (the width of the project container - the width of the collection items so it doesn't go outside of the container) / by how clustered it should be ) - from the surrounding items
+        const x = centerX + (Math.random() - 0.5) * ((projectContainerRect.width - parseInt(cardWidth)) / clusterCentralityX) - cardRect.width / 2;
+        const y = centerY + (Math.random() - 0.5) * ((projectContainerRect.height - parseInt(cardHeight)) / clusterCentralityY) - cardRect.height / 2;
+        card.style.left = x + 'px';
+        card.style.top = y + 'px';
+    }
+    // Or generate a truly random position
+    else {
+        const x = Math.random() * ((projectContainerRect.width - parseInt(cardWidth)) - cardRect.width);
+        const y = Math.random() * ((projectContainerRect.height - parseInt(cardHeight)) - cardRect.height);
+        card.style.left = x + 'px';
+        card.style.top = y + 'px';
+    }
 }
 
-getRandomPosition(projectContainer, card)
-
+card.forEach(e => {
+    getRandomPosition(projectContainer, e);
+});
 
 

@@ -19,6 +19,7 @@
     position: relative;
     z-index: 89;
     background-color: rgba(0, 0, 0, 0.4);
+    pointer-events: all;
     /* max-width: 150%; */
     /* left: 50%;
     top: 50%;
@@ -29,7 +30,10 @@
 
 .collection-item {
     position: absolute;
-    z-index: 99;
+    z-index: 98;
     left: 50%;
     pointer-events: all;
+    * {
+        pointer-events: none;
+    }
 }
