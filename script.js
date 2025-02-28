@@ -50,41 +50,22 @@
 
 
 
-      // How clustered the cards are around the center
-      // Lower values = less clustered
-      let clusterCentralityX = 1.2;
-      let clusterCentralityY = 1;
- 
-      // T: Clustered, F: Random
-      let isClustered = true;
- 
-      // Feel free to change these to match your own class names
-      const projectContainer = document.querySelector("#content"); // The class name for the element containing the draggable elements
-      const card = document.querySelectorAll(".collection-item"); // The class name for the draggable elements
- 
-    //   let card = document.getElementsByClassName('collection-item');
-      const mobileBreakpoint = 992; // The screen pixel width at which the dragging is disabled
- 
-      /**
-       * THE ACTUAL CODE IS BELOW
-       */
-// console.log(card)
+// How clustered the cards are around the center
+// Lower values = less clustered
+let clusterCentralityX = 1.2;
+let clusterCentralityY = 1;
+
+// T: Clustered, F: Random
+let isClustered = true;
+
+// Feel free to change these to match your own class names
+const projectContainer = document.querySelector("#content"); // The class name for the element containing the draggable elements
+const card = document.querySelectorAll(".collection-item"); // The class name for the draggable elements
+
+//   let card = document.getElementsByClassName('collection-item');
+const mobileBreakpoint = 992; // The screen pixel width at which the dragging is disabled
 
 
-
-
-
-
-let foo = 0;
-
-// document.querySelectorAll(".collection-item").forEach(function() {
-//     dragElement(card);
-//     foo += 1
-//     // console.log(foo)
-// });
-
-
-//   new code
 
 let container;
 let content = document.getElementById('content');
@@ -93,20 +74,20 @@ let contentHeight = content.clientHeight;
 
 
 
+
+// center content
+
 // center content variables
 let moveAmountX;
 let moveAmountY;
-
 let viewableArea = document.getElementById('container');
-// center content
+
 window.onload = function(e){ 
     // move it left or top 50% then translate it -50%;
     moveAmountX = viewableArea.clientWidth/2 - content.clientWidth/2;
     moveAmountY = viewableArea.clientHeight/2 - content.clientHeight/2;
     content.style.left = moveAmountX + 'px';
     content.style.top = moveAmountY + 'px';
-
-    
 }
 
 
@@ -216,19 +197,19 @@ function dragElement(elmnt) {
 
 }
     
-
 document.addEventListener('mouseover', function(e) {
-    if ((mouseDown == false) 
+    if (
+        // if nothing else is being dragged
+        (mouseDown == false) 
+        // if items being hovered over are draggable items
         && ((e.target.className == 'collection-item') || (e.target.id == 'content'))
+        // if viewport is bigger than mobile size
         && (document.documentElement.clientWidth > mobileBreakpoint)
     ) {
         e.preventDefault();
         dragElement(e.target);
     }
 });
-
-
-
 
 
 
@@ -244,34 +225,45 @@ document.addEventListener('mouseover', function(e) {
 
 /**
  * Generate random position for a card
- * @param {HTMLElement} projectContainer - The projectContainer element
- * @param {HTMLElement} card - The card element
- * @returns x and y coordinates for the card
+//  * @param {HTMLElement} content - The projectContainer element
+//  * @param {HTMLElement} card - The card element
+//  * @returns x and y coordinates for the card
  */
+
 function getRandomPosition(projectContainer, card) {
-// Get the bounding rectangles
-const projectContainerRect = projectContainer.getBoundingClientRect();
-const cardRect = card.getBoundingClientRect();
+    // Get the bounding rectangles
+    const projectContainerRect = projectContainer.getBoundingClientRect();
 
-// Calculate the center of the projectContainer
-const centerX = projectContainerRect.width / 2;
-const centerY = projectContainerRect.height / 2;
+    // Calculate the center of the projectContainer
+    const centerX = projectContainerRect.width / 2;
+    const centerY = projectContainerRect.height / 2;
 
-// Generate a random position around clustered around the center
-if (isClustered) {
-    const x = centerX + (Math.random() - 0.5) * (projectContainerRect.width / clusterCentralityX) - cardRect.width / 2;
-    const y = centerY + (Math.random() - 0.5) * (projectContainerRect.height / clusterCentralityY) - cardRect.height / 2;
-    return { x, y };
+    card.forEach(e => {
+        const cardRect = e.getBoundingClientRect();
+        console.log(cardRect)
+        // Generate a random position around clustered around the center
+        if (isClustered) {
+            const x = centerX + (Math.random() - 0.5) * (projectContainerRect.width / clusterCentralityX) - cardRect.width / 2;
+            const y = centerY + (Math.random() - 0.5) * (projectContainerRect.height / clusterCentralityY) - cardRect.height / 2;
+            e.style.left = x + 'px';
+            e.style.top = y + 'px';
+        }
+        // Or generate a truly random position
+        else {
+            const x = Math.random() * (projectContainerRect.width - cardRect.width);
+            const y = Math.random() * (projectContainerRect.height - cardRect.height);
+            return { x, y };
+            e.style.left = x + 'px';
+            e.style.top = y + 'px';
+        }
+    });
+    // const cardRect = card.getBoundingClientRect();
+
+
+
 }
-// Or generate a truly random position
-else {
-    const x = Math.random() * (projectContainerRect.width - cardRect.width);
-    const y = Math.random() * (projectContainerRect.height - cardRect.height);
-    return { x, y };
-}
-}
 
-
+getRandomPosition(projectContainer, card)
 
 
 
