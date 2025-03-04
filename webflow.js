@@ -1,19 +1,19 @@
 // CHANGE WEBFLOW CLASSNAMES AND ID'S TO MATCH THE CODE.
-
-const projectContainer = document.querySelector("#content"); // The class name for the element containing the draggable elements
+const cardsContainer = document.querySelector("#cards"); // The class name for the element containing the draggable elements
 const card = document.querySelectorAll(".collection-item"); // The class name for the draggable elements
 
-//   let card = document.getElementsByClassName('collection-item');
+// mobile breakpoint
 const mobileBreakpoint = 992; // The screen pixel width at which the dragging is disabled
 
 
-
+// instantiate container since it's used differently in different functions
 let container;
+
 let content = document.getElementById('content');
+
+// get the size of cardsContainer
 let contentWidth = content.clientWidth;
 let contentHeight = content.clientHeight;
-
-
 
 
 // center content
@@ -23,8 +23,7 @@ let moveAmountX;
 let moveAmountY;
 let viewableArea = document.getElementById('container');
 
-
-
+// move cardsContainer to the
 window.onload = function(e){ 
     moveAmountX = viewableArea.clientWidth/2 - content.clientWidth/2;
     moveAmountY = viewableArea.clientHeight/2 - content.clientHeight/2;
@@ -48,9 +47,7 @@ let viewport = {
 }
 
 
-// mouseDown variable checks if there's something else being moved rn. if there is something else being moved it will not allow the draggable code to execute
-let mouseDown = false;
-
+// stops auto highlighting when dragging elements
 function pauseEvent(e){
     e.stopPropagation();
     e.preventDefault();
@@ -59,7 +56,10 @@ function pauseEvent(e){
     return false;
 }
 
+// mouseDown variable checks if there's something else being moved rn. if there is something else being moved it will not allow the draggable code to execute
+let mouseDown = false;
 
+// drag function
 function dragElement(elmnt) {
 
     var cursorPosX = 0, cursorPosY = 0, intX = 0, intY = 0;
@@ -153,6 +153,8 @@ function dragElement(elmnt) {
         elmnt.onmouseup = null;
         elmnt.onmousemove = null;
         mouseDown = false;
+
+        // removes current elmnt from drag function so it can use a new one
         elmnt.onmouseup = function(){
           elmnt = null;
         };
@@ -180,7 +182,9 @@ document.addEventListener('mouseover', function(e) {
 });
 
 
-// random generation code
+
+
+// random generation function
 
 // How clustered the cards are around the center
 // Lower values = less clustered
@@ -193,43 +197,43 @@ let isClustered = true;
 
 /**
  * Generate random position for a card
-//  * @param {HTMLElement} content - The projectContainer element
+//  * @param {HTMLElement} content - The cardsContainer element
 //  * @param {HTMLElement} card - The card element
 //  * @returns x and y coordinates for the card
  */
 
-function getRandomPosition(projectContainer, card) {
+function getRandomPosition(cardsContainer, card) {
 
     cardWidth = card.offsetWidth;
     cardHeight = card.offsetHeight;
 
     // Get the bounding rectangles
-    const projectContainerRect = projectContainer.getBoundingClientRect();
+    const cardContainerRect = cardsContainer.getBoundingClientRect();
 
-    // Calculate the center of the projectContainer
-    const centerX = projectContainerRect.width / 2;
-    const centerY = projectContainerRect.height / 2;
+    // Calculate the center of the cardsContainer
+    const centerX = cardContainerRect.width / 2;
+    const centerY = cardContainerRect.height / 2;
 
     const cardRect = card.getBoundingClientRect();
     // Generate a random position around clustered around the center
     if (isClustered) {
         // center of div + a random number * ( (the width of the project container - the width of the collection items so it doesn't go outside of the container) / by how clustered it should be ) - from the surrounding items
-        const x = centerX + (Math.random() - 0.5) * ((projectContainerRect.width - parseInt(cardWidth)) / clusterCentralityX) - cardRect.width / 2;
-        const y = centerY + (Math.random() - 0.5) * ((projectContainerRect.height - parseInt(cardHeight)) / clusterCentralityY) - cardRect.height / 2;
+        const x = centerX + (Math.random() - 0.5) * ((cardContainerRect.width - parseInt(cardWidth)) / clusterCentralityX) - cardRect.width / 2;
+        const y = centerY + (Math.random() - 0.5) * ((cardContainerRect.height - parseInt(cardHeight)) / clusterCentralityY) - cardRect.height / 2;
         card.style.left = x + 'px';
         card.style.top = y + 'px';
     }
     // Or generate a truly random position
     else {
-        const x = Math.random() * ((projectContainerRect.width - parseInt(cardWidth)) - cardRect.width);
-        const y = Math.random() * ((projectContainerRect.height - parseInt(cardHeight)) - cardRect.height);
+        const x = Math.random() * ((cardContainerRect.width - parseInt(cardWidth)) - cardRect.width);
+        const y = Math.random() * ((cardContainerRect.height - parseInt(cardHeight)) - cardRect.height);
         card.style.left = x + 'px';
         card.style.top = y + 'px';
     }
 }
 
 card.forEach(e => {
-    getRandomPosition(projectContainer, e);
+    getRandomPosition(cardsContainer, e);
 });
 
 
